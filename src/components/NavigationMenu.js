@@ -67,6 +67,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
             }
           />
         </ListItem>
+        <Divider />
         <ListItem>
           <ListItemText
             sx={{ m: 0, whiteSpace: "nowrap" }}

@@ -4,6 +4,7 @@ import { Box, CssBaseline } from "@mui/material";
 import Header from "./components/Header";
 import NavigationMenu from "./components/NavigationMenu";
 import Home from "./screens/Home";
+import Login from "./screens/Login";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -25,7 +26,7 @@ const App = () => {
           component="main"
           sx={{
             flexGrow: 1,
-            ml: drawerOpen ? `${drawerWidth}px` : `${miniDrawerWidth}px`, // Adjust the margin based on drawer state
+            ml: drawerOpen ? `${drawerWidth}px` : `${miniDrawerWidth}px`,
             transition: (theme) =>
               theme.transitions.create("margin", {
                 easing: theme.transitions.easing.sharp,
@@ -35,6 +36,7 @@ const App = () => {
         >
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </Box>
       </Box>

@@ -2,6 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import { Link } from "react-router-dom";
 
 const Header = ({ toggleDrawer }) => {
   return (
@@ -34,6 +35,8 @@ const Header = ({ toggleDrawer }) => {
             textTransform: "none",
             lineHeight: "normal",
           }}
+          component={Link}
+          to="/login"
         >
           Zaloguj się
         </Button>
