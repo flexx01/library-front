@@ -2,7 +2,7 @@ import axiosInstance from "./axiosConfig";
 
 export const login = async (email, password) => {
   try {
-    const response = await axiosInstance.post("/auth/login", {
+    const response = await axiosInstance.post("/api/login", {
       email,
       password,
     });
@@ -17,7 +17,7 @@ export const login = async (email, password) => {
 
 export const register = async (userDetails) => {
   try {
-    const response = await axiosInstance.post("/auth/register", userDetails);
+    const response = await axiosInstance.post("/api/register", userDetails);
     return response.data;
   } catch (error) {
     console.error("Error during registration:", error);
