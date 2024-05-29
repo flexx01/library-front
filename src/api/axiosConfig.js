@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://biblioteka-39f72f16d605.herokuapp.com/", // Replace with your Swagger API base URL
+  baseURL: "https://biblioteka-39f72f16d605.herokuapp.com/",
   headers: {
     "Content-Type": "application/json",
   },

@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import NavigationMenu from "./components/NavigationMenu";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
+import { AuthProvider } from "./context/AuthContext";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -17,30 +18,32 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <CssBaseline />
-      <Header toggleDrawer={toggleDrawer} />
-      <Box sx={{ display: "flex", mt: 8 }}>
-        <NavigationMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            ml: drawerOpen ? `${drawerWidth}px` : `${miniDrawerWidth}px`,
-            transition: (theme) =>
-              theme.transitions.create("margin", {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-              }),
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
+    <AuthProvider>
+      <Router>
+        <CssBaseline />
+        <Header toggleDrawer={toggleDrawer} />
+        <Box sx={{ display: "flex", mt: 8 }}>
+          <NavigationMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              ml: drawerOpen ? `${drawerWidth}px` : `${miniDrawerWidth}px`,
+              transition: (theme) =>
+                theme.transitions.create("margin", {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.leavingScreen,
+                }),
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </Box>
         </Box>
-      </Box>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 };
 
