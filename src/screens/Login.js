@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box,
   Typography,
@@ -8,7 +8,9 @@ import {
   Tab,
   Grid,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { login, register } from "../api/authApi";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -18,6 +20,8 @@ const Login = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const { login: loginContext } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
@@ -27,7 +31,8 @@ const Login = () => {
     try {
       const data = await login(email, password);
       console.log("Login successful:", data);
-      // Handle successful login (e.g., store token, redirect, etc.)
+      await loginContext(data); // Update context
+      navigate("/"); // Redirect to home
     } catch (error) {
       console.error("Login error:", error);
     }
