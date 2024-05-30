@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Drawer,
   List,
@@ -11,8 +11,10 @@ import {
   Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext"; // Import kontekstu autoryzacji
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -35,6 +37,8 @@ const StyledDrawer = styled(Drawer, {
 }));
 
 const NavigationMenu = ({ open, toggleDrawer }) => {
+  const { user } = useContext(AuthContext); // Użycie kontekstu autoryzacji
+
   const drawerContent = (
     <List
       sx={{
@@ -52,6 +56,18 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Główna" />
         </ListItem>
         <Divider />
+        {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
+        {user && user.role === "ADMIN" && (
+          <>
+            <ListItem button component={Link} to="/admin">
+              <ListItemIcon>
+                <AdminPanelSettingsIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Panel Admina" />
+            </ListItem>
+            <Divider />
+          </>
+        )}
       </div>
       <div>
         <Divider />
@@ -100,6 +116,19 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </ListItem>
         </Tooltip>
         <Divider />
+        {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
+        {user && user.role === "ADMIN" && (
+          <>
+            <Tooltip title="Panel Admina" placement="right">
+              <ListItem button component={Link} to="/admin">
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+              </ListItem>
+            </Tooltip>
+            <Divider />
+          </>
+        )}
       </div>
     </List>
   );
