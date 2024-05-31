@@ -4,7 +4,7 @@ import { CssBaseline, Container, Box } from '@mui/material';
 import UserTable from '../components/UserTable';
 import UserEdit from '../components/UserEdit';
 import UserAdd from '../components/UserAdd';
-import PrivateRoute from '../context/PrivateRoute'; // Import PrivateRoute
+import PrivateRoute from '../context/PrivateRoute'; 
 
 const AdminPage = () => {
     return (
