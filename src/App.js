@@ -6,6 +6,7 @@ import NavigationMenu from "./components/NavigationMenu";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
 import AdminPage from "./screens/AdminPage";
+import UserProfileEdit from "./screens/UserProfileEdit";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./context/PrivateRoute"; // Import komponentu PrivateRoute
 
@@ -40,6 +41,7 @@ const App = () => {
           >
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/profiledit" element={<UserProfileEdit />} />
               <Route path="/login" element={<Login />} />
               <Route element={<PrivateRoute role="ADMIN" />}>
                 <Route path="/admin/*" element={<AdminPage />} />

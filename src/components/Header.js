@@ -72,8 +72,10 @@ const Header = ({ toggleDrawer }) => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
+              <MenuItem component={Link} to="/profiledit">
+                Ustawienia Profilu
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Wyloguj się</MenuItem>
-              {/* Add more menu items as needed */}
             </Menu>
           </>
         ) : (
