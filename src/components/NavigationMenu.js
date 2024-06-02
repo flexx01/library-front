@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
@@ -54,6 +55,13 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
             <HomeIcon />
           </ListItemIcon>
           <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Główna" />
+        </ListItem>
+        <Divider />
+        <ListItem button component={Link} to="/books">
+          <ListItemIcon>
+            <BookIcon />
+          </ListItemIcon>
+          <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Przeglądaj Książki" />
         </ListItem>
         <Divider />
         {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
@@ -112,6 +120,14 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           <ListItem button component={Link} to="/">
             <ListItemIcon>
               <HomeIcon />
+            </ListItemIcon>
+          </ListItem>
+        </Tooltip>
+        <Divider />
+        <Tooltip title="Przeglądaj Książki" placement="right">
+          <ListItem button component={Link} to="/books">
+            <ListItemIcon>
+              <BookIcon />
             </ListItemIcon>
           </ListItem>
         </Tooltip>

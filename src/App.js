@@ -9,6 +9,7 @@ import AdminPage from "./screens/AdminPage";
 import UserProfileEdit from "./screens/UserProfileEdit";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./context/PrivateRoute";
+import PublicBookList from "./components/PublicBookList";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -42,6 +43,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/books" element={<PublicBookList />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/profiledit" element={<UserProfileEdit />} />
                 <Route path="/admin/*" element={<AdminPage />} />
