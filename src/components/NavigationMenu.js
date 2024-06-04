@@ -57,13 +57,21 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Główna" />
         </ListItem>
         <Divider />
-        <ListItem button component={Link} to="/books">
-          <ListItemIcon>
-            <BookIcon />
-          </ListItemIcon>
-          <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Przeglądaj Książki" />
-        </ListItem>
-        <Divider />
+        {user && (
+          <>
+            <ListItem button component={Link} to="/books">
+              <ListItemIcon>
+                <BookIcon />
+              </ListItemIcon>
+              <ListItemText
+                sx={{ m: 0, whiteSpace: "nowrap" }}
+                primary="Przeglądaj Książki"
+              />
+            </ListItem>
+            <Divider />
+          </>
+        )}
+
         {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
         {user && user.role === "ADMIN" && (
           <>
@@ -71,7 +79,10 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
               <ListItemIcon>
                 <AdminPanelSettingsIcon />
               </ListItemIcon>
-              <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Panel Admina" />
+              <ListItemText
+                sx={{ m: 0, whiteSpace: "nowrap" }}
+                primary="Panel Admina"
+              />
             </ListItem>
             <Divider />
           </>
@@ -124,14 +135,19 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </ListItem>
         </Tooltip>
         <Divider />
-        <Tooltip title="Przeglądaj Książki" placement="right">
-          <ListItem button component={Link} to="/books">
-            <ListItemIcon>
-              <BookIcon />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip>
-        <Divider />
+        {user && (
+          <>
+            <Tooltip title="Przeglądaj Książki" placement="right">
+              <ListItem button component={Link} to="/books">
+                <ListItemIcon>
+                  <BookIcon />
+                </ListItemIcon>
+              </ListItem>
+            </Tooltip>
+            <Divider />
+          </>
+        )}
+
         {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
         {user && user.role === "ADMIN" && (
           <>

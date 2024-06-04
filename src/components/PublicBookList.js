@@ -1,16 +1,27 @@
-// src/screens/PublicBookList.js
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../api/axiosConfig';
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../api/axiosConfig";
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Typography, Box, Button, Dialog,
-  DialogActions, DialogContent, DialogContentText, DialogTitle
-} from '@mui/material';
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 const PublicBookList = () => {
   const [books, setBooks] = useState([]);
   const [selectedBookCopies, setSelectedBookCopies] = useState([]);
-  const [selectedBookTitle, setSelectedBookTitle] = useState('');
+  const [selectedBookTitle, setSelectedBookTitle] = useState("");
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -20,23 +31,27 @@ const PublicBookList = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axiosInstance.get('/api/book/all');
+      const response = await axiosInstance.get("/api/book/all");
       setBooks(response.data);
     } catch (error) {
-      console.error('There was an error fetching the books!', error);
+      console.error("There was an error fetching the books!", error);
       setError(error);
     }
   };
 
   const fetchCopies = async (bookId, title) => {
     try {
-      const response = await axiosInstance.get(`/api/copy/allByBookId?bookId=${bookId}`);
-      const availableCopies = response.data.filter(copy => copy.status === 'AVAILABLE');
+      const response = await axiosInstance.get(
+        `/api/copy/allByBookId?bookId=${bookId}`
+      );
+      const availableCopies = response.data.filter(
+        (copy) => copy.status === "AVAILABLE"
+      );
       setSelectedBookCopies(availableCopies);
       setSelectedBookTitle(title);
       setOpen(true);
     } catch (error) {
-      console.error('There was an error fetching the copies!', error);
+      console.error("There was an error fetching the copies!", error);
       setError(error);
     }
   };
@@ -82,13 +97,12 @@ const PublicBookList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {error && <Typography color="error">Błąd podczas pobierania danych: {error.message}</Typography>}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="md"
-        fullWidth
-      >
+      {error && (
+        <Typography color="error">
+          Błąd podczas pobierania danych: {error.message}
+        </Typography>
+      )}
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>Kopie książki: {selectedBookTitle}</DialogTitle>
         <DialogContent>
           <TableContainer component={Paper}>

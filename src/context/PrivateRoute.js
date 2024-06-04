@@ -2,16 +2,20 @@ import React, { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
-
-const PrivateRoute = () => {
+const PrivateRoute = ({ requiredRole }) => {
   const { user } = useContext(AuthContext);
 
   if (!user) {
-    // Użytkownik niezalogowany
+    // User not logged in
     return <Navigate to="/" />;
   }
 
-  // Użytkownik zalogowany i posiada wymagane uprawnienia
+  if (requiredRole && user.role !== requiredRole) {
+    // User does not have the required role
+    return <Navigate to="/" />;
+  }
+
+  // User is logged in and has the required role
   return <Outlet />;
 };
 
