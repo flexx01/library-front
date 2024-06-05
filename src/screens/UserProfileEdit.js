@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
-import { AuthContext } from "../context/AuthContext"; // Importowanie kontekstu autoryzacji
+import { AuthContext } from "../context/AuthContext";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 
 const UserProfileEdit = () => {
   const navigate = useNavigate();
-  const { user: authUser } = useContext(AuthContext); // Pobranie zalogowanego użytkownika z kontekstu
+  const { user: authUser, updateUser } = useContext(AuthContext);
   const [user, setUser] = useState({
     id: 0,
     firstName: "",
@@ -22,11 +22,9 @@ const UserProfileEdit = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("Fetching user with ID:", authUser.id); // Logowanie ID użytkownika
         const response = await axiosInstance.get(
           `/api/users?id=${authUser.id}`
         );
-        console.log("User data:", response.data); // Logowanie danych użytkownika
         setUser({
           id: response.data.id,
           firstName: response.data.firstName,
@@ -66,9 +64,8 @@ const UserProfileEdit = () => {
   const handleSave = async () => {
     if (validate()) {
       try {
-        console.log("Updating user with data:", user); // Logowanie danych użytkownika
         const response = await axiosInstance.put(`/api/users`, user);
-        console.log("Response:", response); // Logowanie odpowiedzi serwera
+        updateUser(user); // Update the user context
       } catch (error) {
         console.error("There was an error updating the user data!", error);
       }
