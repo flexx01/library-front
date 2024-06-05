@@ -7,6 +7,7 @@ import Home from "./screens/Home";
 import Login from "./screens/Login";
 import AdminPage from "./screens/AdminPage";
 import UserProfileEdit from "./screens/UserProfileEdit";
+import NotFound from "./screens/NotFound"; // Import the NotFound component
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./context/PrivateRoute";
 import PublicBookList from "./components/PublicBookList";
@@ -43,11 +44,14 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/books" element={<PublicBookList />} />
               <Route element={<PrivateRoute />}>
+                <Route path="/books" element={<PublicBookList />} />
                 <Route path="/profiledit" element={<UserProfileEdit />} />
+              </Route>
+              <Route element={<PrivateRoute requiredRole="ADMIN" />}>
                 <Route path="/admin/*" element={<AdminPage />} />
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Box>
         </Box>

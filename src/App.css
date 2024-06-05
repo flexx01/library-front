@@ -22,9 +22,9 @@ footer {
 }
 
 .MuiDrawer-paper {
-  background-color: white; /* Change this to your desired background color */
+  background-color: white;
 }
 
 .MuiBackdrop-root {
-  background-color: transparent !important; /* Ensures no dark overlay */
+  background-color: transparent !important;
 }

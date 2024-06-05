@@ -33,8 +33,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authToken");
   };
 
+  const updateUser = async (userData) => {
+    setUser(userData);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
