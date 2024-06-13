@@ -22,12 +22,14 @@ const Login = () => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); // State for success messages
   const { login: loginContext } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
     setError(""); // Clear error message when switching tabs
+    setSuccess(""); // Clear success message when switching tabs
   };
 
   const handleLogin = async (e) => {
@@ -51,6 +53,7 @@ const Login = () => {
   const handleRegister = async (e) => {
     e.preventDefault(); // Prevent default form submission
     setError(""); // Clear any previous error messages
+    setSuccess(""); // Clear any previous success messages
     if (
       !email ||
       !password ||
@@ -78,10 +81,23 @@ const Login = () => {
     try {
       const data = await register(userDetails);
       console.log("Registration successful:", data);
-      // Handle successful registration (e.g., redirect to login, etc.)
+      setSuccess(
+        "Rejestracja zakończona sukcesem! Możesz się teraz zalogować."
+      ); // Set success message
+      setTabIndex(0); // Switch to the login tab
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setFirstName("");
+      setLastName("");
+      setPhoneNumber("");
     } catch (error) {
       console.error("Registration error:", error);
-      setError("Rejestracja nie powiodła się"); // Set error message for failed registration
+      if (error.response && error.response.status === 409) {
+        setError("Użytkownik o podanym adresie email już istnieje");
+      } else {
+        setError("Rejestracja nie powiodła się");
+      }
     }
   };
 
@@ -114,6 +130,11 @@ const Login = () => {
       {error && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          {success}
         </Alert>
       )}
       {tabIndex === 0 && (

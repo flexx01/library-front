@@ -24,3 +24,23 @@ export const register = async (userDetails) => {
     throw error;
   }
 };
+
+export const logout = async () => {
+  try {
+    await axiosInstance.get("/api/logout");
+    localStorage.removeItem("authToken"); // Remove the token
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw error;
+  }
+};
+
+export const getMe = async () => {
+  try {
+    const response = await axiosInstance.get("/api/me");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
+  }
+};
