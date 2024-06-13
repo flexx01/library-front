@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axiosInstance from "../api/axiosConfig";
 import {
   Table,
@@ -14,15 +14,19 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  Alert,
 } from "@mui/material";
+import { AuthContext } from "../context/AuthContext";
 
 const PublicBookList = () => {
+  const { user } = useContext(AuthContext);
   const [books, setBooks] = useState([]);
   const [selectedBookCopies, setSelectedBookCopies] = useState([]);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
+  const [selectedBookId, setSelectedBookId] = useState(null); // Add state for selectedBookId
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -49,6 +53,7 @@ const PublicBookList = () => {
       );
       setSelectedBookCopies(availableCopies);
       setSelectedBookTitle(title);
+      setSelectedBookId(bookId); // Set selectedBookId
       setOpen(true);
     } catch (error) {
       console.error("There was an error fetching the copies!", error);
@@ -58,6 +63,22 @@ const PublicBookList = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setSuccess(null);
+    setError(null);
+  };
+
+  const handleReserve = async (copyId) => {
+    try {
+      await axiosInstance.post("/api/reservation/addByCopyId", {
+        copyId,
+        userId: user.id,
+      });
+      setSuccess("Rezerwacja zakończona sukcesem");
+      fetchCopies(selectedBookId, selectedBookTitle); // Refresh copies
+    } catch (error) {
+      console.error("There was an error reserving the copy!", error);
+      setError("Błąd podczas rezerwacji kopii");
+    }
   };
 
   return (
@@ -105,6 +126,8 @@ const PublicBookList = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>Kopie książki: {selectedBookTitle}</DialogTitle>
         <DialogContent>
+          {success && <Alert severity="success">{success}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -112,6 +135,7 @@ const PublicBookList = () => {
                   <TableCell>ID</TableCell>
                   <TableCell>Lokalizacja</TableCell>
                   <TableCell>Status</TableCell>
+                  <TableCell>Akcje</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -120,6 +144,15 @@ const PublicBookList = () => {
                     <TableCell>{copy.id}</TableCell>
                     <TableCell>{copy.location}</TableCell>
                     <TableCell>{copy.status}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleReserve(copy.id)}
+                      >
+                        Zarezerwuj
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

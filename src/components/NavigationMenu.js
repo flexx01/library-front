@@ -11,11 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
-import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
+import BookIcon from "@mui/icons-material/Book";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; // Import kontekstu autoryzacji
+import { AuthContext } from "../context/AuthContext";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -38,7 +38,7 @@ const StyledDrawer = styled(Drawer, {
 }));
 
 const NavigationMenu = ({ open, toggleDrawer }) => {
-  const { user } = useContext(AuthContext); // Użycie kontekstu autoryzacji
+  const { user } = useContext(AuthContext);
 
   const drawerContent = (
     <List
@@ -57,7 +57,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Główna" />
         </ListItem>
         <Divider />
-        {user && (
+        {user && user.role !== "ADMIN" && (
           <>
             <ListItem button component={Link} to="/books">
               <ListItemIcon>
@@ -72,7 +72,6 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </>
         )}
 
-        {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
         {user && user.role === "ADMIN" && (
           <>
             <ListItem button component={Link} to="/admin">
@@ -135,7 +134,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </ListItem>
         </Tooltip>
         <Divider />
-        {user && (
+        {user && user.role !== "ADMIN" && (
           <>
             <Tooltip title="Przeglądaj Książki" placement="right">
               <ListItem button component={Link} to="/books">
@@ -148,7 +147,6 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </>
         )}
 
-        {/* Dodany guzik do panelu admina, tylko jeśli użytkownik jest adminem */}
         {user && user.role === "ADMIN" && (
           <>
             <Tooltip title="Panel Admina" placement="right">
