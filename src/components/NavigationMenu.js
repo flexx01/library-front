@@ -15,8 +15,6 @@ import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
 import HistoryIcon from '@mui/icons-material/History';
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
-import BookIcon from "@mui/icons-material/Book";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
