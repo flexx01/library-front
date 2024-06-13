@@ -54,9 +54,6 @@ const Reservations = () => {
             <Typography variant="h4" gutterBottom>
                 Twoje Rezerwacje
             </Typography>
-            <Box>
-                <TextField id="outlined-basic" label="Szukaj" variant="outlined" value={search} onChange={ e => setSearch(e.target.value)}/>
-            </Box>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
