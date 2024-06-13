@@ -11,7 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
+import HistoryIcon from '@mui/icons-material/History';
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
@@ -68,6 +70,30 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                 primary="Przeglądaj Książki"
               />
             </ListItem>
+            {user.role === "USER" &&
+                <>
+                  <Divider />
+                  <ListItem button component={Link} to="/history">
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        sx={{ m: 0, whiteSpace: "nowrap" }}
+                        primary="Historia wypożyczeń"
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem button component={Link} to="/reservations">
+                    <ListItemIcon>
+                      <BookmarkAddedIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        sx={{ m: 0, whiteSpace: "nowrap" }}
+                        primary="Rezerwacje"
+                    />
+                  </ListItem>
+                </>
+            }
             <Divider />
           </>
         )}
@@ -144,6 +170,26 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                 </ListItemIcon>
               </ListItem>
             </Tooltip>
+            {user.role === "USER" &&
+                <>
+                  <Divider />
+                  <Tooltip title="Hisoria wypożyczeń" placement="right">
+                  <ListItem button component={Link} to="/history">
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                  </Tooltip>
+                  <Divider />
+                  <Tooltip title="Rezerwacje" placement="right">
+                    <ListItem button component={Link} to="/reservations">
+                      <ListItemIcon>
+                        <BookmarkAddedIcon />
+                      </ListItemIcon>
+                    </ListItem>
+                  </Tooltip>
+                  </>
+                  }
             <Divider />
           </>
         )}

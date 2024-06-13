@@ -11,6 +11,8 @@ import NotFound from "./screens/NotFound"; // Import the NotFound component
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./context/PrivateRoute";
 import PublicBookList from "./components/PublicBookList";
+import LoanHistory from "./components/LoanHistory";
+import Reservations from "./components/Reservations";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -46,6 +48,8 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/books" element={<PublicBookList />} />
+                <Route path="/history" element={<LoanHistory />} />
+                <Route path="/reservations" element={<Reservations />} />
                 <Route path="/profiledit" element={<UserProfileEdit />} />
               </Route>
               <Route element={<PrivateRoute requiredRole="ADMIN" />}>
