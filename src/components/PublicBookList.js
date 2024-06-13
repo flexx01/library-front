@@ -14,7 +14,9 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
+  TextField,
   Alert,
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
@@ -24,18 +26,33 @@ const PublicBookList = () => {
   const [books, setBooks] = useState([]);
   const [selectedBookCopies, setSelectedBookCopies] = useState([]);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
+  const [search,setSearch] = useState('');
   const [selectedBookId, setSelectedBookId] = useState(null); // Add state for selectedBookId
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [search]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axiosInstance.get("/api/me");
+        if(response.status === 200) {
+          setUserId(response.data.id);
+        }
+      }catch (e) {
+
+      }
+    })();
+  })
 
   const fetchBooks = async () => {
     try {
-      const response = await axiosInstance.get("/api/book/all");
+      const response = await axiosInstance.get("/api/book/all?search=" + search);
       setBooks(response.data);
     } catch (error) {
       console.error("There was an error fetching the books!", error);
@@ -61,31 +78,47 @@ const PublicBookList = () => {
     }
   };
 
+  const reserveCopy = async (copyId) => {
+    try {
+      const body = {
+        userId,
+        copyId,
+      }
+      await axiosInstance.post("/api/reservation/addByCopyId", body);
+    } catch (error) {
+    } finally {
+      handleClose();
+      fetchBooks();
+    }
+  };
+
+  const copyStatusMapper = (copyStatus) => {
+    switch(copyStatus) {
+      case "AVAILABLE":
+        return "Dostępna";
+      case "RESERVED":
+        return "Zarezerwowana";
+      case "LOST":
+        return "Stracona";
+      default:
+        return "";
+    }
+  }
+
   const handleClose = () => {
     setOpen(false);
     setSuccess(null);
     setError(null);
   };
 
-  const handleReserve = async (copyId) => {
-    try {
-      await axiosInstance.post("/api/reservation/addByCopyId", {
-        copyId,
-        userId: user.id,
-      });
-      setSuccess("Rezerwacja zakończona sukcesem");
-      fetchCopies(selectedBookId, selectedBookTitle); // Refresh copies
-    } catch (error) {
-      console.error("There was an error reserving the copy!", error);
-      setError("Błąd podczas rezerwacji kopii");
-    }
-  };
-
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box gap={4} sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>
         Książki
       </Typography>
+      <Box>
+        <TextField id="outlined-basic" label="Szukaj" variant="outlined" value={search} onChange={ e => setSearch(e.target.value)}/>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -129,6 +162,7 @@ const PublicBookList = () => {
           {success && <Alert severity="success">{success}</Alert>}
           {error && <Alert severity="error">{error}</Alert>}
           <TableContainer component={Paper}>
+            {selectedBookCopies. length > 0 ?
             <Table>
               <TableHead>
                 <TableRow>
@@ -143,13 +177,9 @@ const PublicBookList = () => {
                   <TableRow key={copy.id}>
                     <TableCell>{copy.id}</TableCell>
                     <TableCell>{copy.location}</TableCell>
-                    <TableCell>{copy.status}</TableCell>
+                    <TableCell>{copyStatusMapper(copy.status)}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleReserve(copy.id)}
-                      >
+                      <Button variant="contained" onClick={async () => {await reserveCopy(copy.id)}}>
                         Zarezerwuj
                       </Button>
                     </TableCell>
@@ -157,6 +187,15 @@ const PublicBookList = () => {
                 ))}
               </TableBody>
             </Table>
+            :
+                <Box justifyContent="center"
+                       alignItems="center"
+                        flexDirection="column">
+                    <DialogContentText>
+                      Brak dostępnych kopii książki.
+                    </DialogContentText>
+                </Box>
+            }
           </TableContainer>
         </DialogContent>
         <DialogActions>

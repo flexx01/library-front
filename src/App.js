@@ -10,6 +10,8 @@ import UserProfileEdit from "./screens/UserProfileEdit";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./context/PrivateRoute";
 import PublicBookList from "./components/PublicBookList";
+import LoanHistory from "./components/LoanHistory";
+import Reservations from "./components/Reservations";
 import UserLoans from "./components/UserLoans";
 import UserFines from "./components/UserFines";
 import AdminLoans from "./components/AdminLoans";
@@ -60,6 +62,15 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/books" element={<PublicBookList />} />
+                <Route path="/history" element={<LoanHistory />} />
+                <Route path="/reservations" element={<Reservations />} />
+                <Route path="/profiledit" element={<UserProfileEdit />} />
+              </Route>
+              <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+                <Route path="/admin/*" element={<AdminPage />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
                 <Route element={<PrivateRoute />}>
                   <Route path="/profiledit" element={<UserProfileEdit />} />
                   <Route path="/user/loans" element={<UserLoans />} />
