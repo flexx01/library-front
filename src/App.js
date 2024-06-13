@@ -16,6 +16,7 @@ import UserLoans from "./components/UserLoans";
 import UserFines from "./components/UserFines";
 import AdminLoans from "./components/AdminLoans";
 import AdminFines from "./components/AdminFines";
+import NotFound from "./screens/NotFound";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -58,6 +59,7 @@ const App = () => {
                   }),
               }}
             >
+
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
@@ -65,12 +67,10 @@ const App = () => {
                 <Route path="/history" element={<LoanHistory />} />
                 <Route path="/reservations" element={<Reservations />} />
                 <Route path="/profiledit" element={<UserProfileEdit />} />
-              </Route>
-              <Route element={<PrivateRoute requiredRole="ADMIN" />}>
-                <Route path="/admin/*" element={<AdminPage />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                <Route element={<PrivateRoute requiredRole="ADMIN" />}>
+                  <Route path="/admin/*" element={<AdminPage />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
                 <Route element={<PrivateRoute />}>
                   <Route path="/profiledit" element={<UserProfileEdit />} />
                   <Route path="/user/loans" element={<UserLoans />} />
@@ -80,7 +80,7 @@ const App = () => {
                   <Route path="/admin/fines" element={<AdminFines />} />
                 </Route>
               </Routes>
-            </Box>
+          </Box>
           </Box>
         </Router>
       </AuthProvider>
