@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { MoreVert } from "@mui/icons-material";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { AuthContext } from "../context/AuthContext";
 
 const UserTable = () => {
@@ -112,10 +113,12 @@ const UserTable = () => {
 
   const handleSelectBook = async (book) => {
     setSelectedBook(book);
+    setSelectedCopyId(null)
     try {
       const response = await axiosInstance.get(
         `/api/copy/allByBookId?bookId=${book.id}`
       );
+
       setBookCopies(response.data);
     } catch (error) {
       console.error("There was an error fetching the book copies!", error);
@@ -210,6 +213,19 @@ const UserTable = () => {
         break;
     }
   };
+
+  const copyStatusMapper = (copyStatus) => {
+    switch (copyStatus) {
+      case "AVAILABLE":
+       return "Dostępna";
+      case "BORROWED":
+        return "Wypożyczona";
+      case "RESERVED":
+        return "Zarezerwowana";
+      default:
+        return copyStatus;
+    }
+  }
 
   const handleReturnBook = async (userId) => {
     try {
@@ -377,7 +393,10 @@ const UserTable = () => {
                       <TableCell>{book.authors}</TableCell>
                       <TableCell>{book.category}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleSelectBook(book)}>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={() => handleSelectBook(book)}>
                           Wybierz
                         </Button>
                       </TableCell>
@@ -403,20 +422,22 @@ const UserTable = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {bookCopies.map((copy) => (
-                      <TableRow key={copy.id}>
+                    {bookCopies?.map((copy) => (
+                      <TableRow key={copy.id} selected={selectedCopyId === copy.id}>
                         <TableCell>{copy.id}</TableCell>
-                        <TableCell>{copy.status}</TableCell>
+                        <TableCell>{copyStatusMapper(copy?.status)}</TableCell>
                         <TableCell>{copy.location}</TableCell>
                         <TableCell>
+                          {selectedCopyId === copy.id ?
+                          <CheckCircleOutlineIcon color="primary" /> :
                           <Button
                             onClick={() => setSelectedCopyId(copy.id)}
-                            color={
-                              selectedCopyId === copy.id ? "primary" : "default"
-                            }
+                            color={copy.status === "BORROWED" ? "secondary" : "primary"}
+                            disabled={copy.status === "BORROWED"}
                           >
                             Wybierz
                           </Button>
+                          }
                         </TableCell>
                       </TableRow>
                     ))}
