@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axiosInstance from "../api/axiosConfig";
 import {
   Table,
@@ -15,15 +15,21 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, TextField,
+  DialogTitle,
+  TextField,
+  Alert,
 } from "@mui/material";
+import { AuthContext } from "../context/AuthContext";
 
 const PublicBookList = () => {
+  const { user } = useContext(AuthContext);
   const [books, setBooks] = useState([]);
   const [selectedBookCopies, setSelectedBookCopies] = useState([]);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
   const [search,setSearch] = useState('');
+  const [selectedBookId, setSelectedBookId] = useState(null); // Add state for selectedBookId
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState(null);
 
@@ -64,6 +70,7 @@ const PublicBookList = () => {
       );
       setSelectedBookCopies(availableCopies);
       setSelectedBookTitle(title);
+      setSelectedBookId(bookId); // Set selectedBookId
       setOpen(true);
     } catch (error) {
       console.error("There was an error fetching the copies!", error);
@@ -100,6 +107,8 @@ const PublicBookList = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setSuccess(null);
+    setError(null);
   };
 
   return (
@@ -150,6 +159,8 @@ const PublicBookList = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>Kopie książki: {selectedBookTitle}</DialogTitle>
         <DialogContent>
+          {success && <Alert severity="success">{success}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
           <TableContainer component={Paper}>
             {selectedBookCopies. length > 0 ?
             <Table>
@@ -158,7 +169,7 @@ const PublicBookList = () => {
                   <TableCell>ID</TableCell>
                   <TableCell>Lokalizacja</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell>Akcje</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
