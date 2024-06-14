@@ -22,6 +22,10 @@ import {
   IconButton,
   Menu,
   MenuItem as MenuItemMui,
+  Pagination,
+  FormControl,
+  InputLabel,
+  Grid
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { MoreVert } from "@mui/icons-material";
@@ -49,6 +53,8 @@ const UserTable = () => {
   const [filterRole, setFilterRole] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
@@ -154,7 +160,6 @@ const UserTable = () => {
     setSuccess("");
   };
 
-
   const handleAddFine = async () => {
     setError("");
     setSuccess("");
@@ -258,6 +263,14 @@ const UserTable = () => {
     }
   }
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1);
+  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -266,6 +279,8 @@ const UserTable = () => {
       user.email.toLowerCase().includes(searchQuery) ||
       user.phoneNumber.toLowerCase().includes(searchQuery)
   );
+
+  const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -322,6 +337,31 @@ const UserTable = () => {
           </Button>
         </Box>
       </Box>
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" mb={2} sx={{ flexWrap: "nowrap" }}>
+        <Grid item>
+          <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Liczba na stronę</InputLabel>
+            <Select
+              value={rowsPerPage}
+              onChange={handleChangeRowsPerPage}
+              label="Liczba na stronę"
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <Pagination
+            count={Math.ceil(filteredUsers.length / rowsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+          />
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -336,7 +376,7 @@ const UserTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.firstName}</TableCell>
@@ -551,7 +591,6 @@ const UserTable = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {setOpenReturnBook(false)}}>Anuluj</Button>
-          {/*<Button onClick={handleAddFine}>Dodaj</Button>*/}
         </DialogActions>
       </Dialog>
     </Box>

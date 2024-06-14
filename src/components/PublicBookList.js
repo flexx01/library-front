@@ -18,6 +18,12 @@ import {
   DialogTitle,
   TextField,
   Alert,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 
@@ -26,12 +32,14 @@ const PublicBookList = () => {
   const [books, setBooks] = useState([]);
   const [selectedBookCopies, setSelectedBookCopies] = useState([]);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
-  const [search,setSearch] = useState('');
-  const [selectedBookId, setSelectedBookId] = useState(null); // Add state for selectedBookId
+  const [search, setSearch] = useState('');
+  const [selectedBookId, setSelectedBookId] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     fetchBooks();
@@ -44,11 +52,11 @@ const PublicBookList = () => {
         if(response.status === 200) {
           setUserId(response.data.id);
         }
-      }catch (e) {
+      } catch (e) {
 
       }
     })();
-  })
+  }, [])
 
   const fetchBooks = async () => {
     try {
@@ -70,7 +78,7 @@ const PublicBookList = () => {
       );
       setSelectedBookCopies(availableCopies);
       setSelectedBookTitle(title);
-      setSelectedBookId(bookId); // Set selectedBookId
+      setSelectedBookId(bookId);
       setOpen(true);
     } catch (error) {
       console.error("There was an error fetching the copies!", error);
@@ -111,14 +119,50 @@ const PublicBookList = () => {
     setError(null);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1);
+  };
+
+  const paginatedBooks = books.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+
   return (
-    <Box gap={4} sx={{ padding: 4 }}>
+    <Box sx={{ padding: 2 }}>
       <Typography variant="h4" gutterBottom>
         Książki
       </Typography>
-      <Box>
+      <Box sx={{ mb: 2 }}>
         <TextField id="outlined-basic" label="Szukaj" variant="outlined" value={search} onChange={ e => setSearch(e.target.value)}/>
       </Box>
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" mb={2} sx={{ flexWrap: "nowrap" }}>
+        <Grid item>
+          <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Liczba na stronę</InputLabel>
+            <Select
+              value={rowsPerPage}
+              onChange={handleChangeRowsPerPage}
+              label="Liczba na stronę"
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <Pagination
+            count={Math.ceil(books.length / rowsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+          />
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -131,7 +175,7 @@ const PublicBookList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {books.map((book) => (
+            {paginatedBooks.map((book) => (
               <TableRow key={book.id}>
                 <TableCell>{book.id}</TableCell>
                 <TableCell>{book.title}</TableCell>
@@ -162,7 +206,7 @@ const PublicBookList = () => {
           {success && <Alert severity="success">{success}</Alert>}
           {error && <Alert severity="error">{error}</Alert>}
           <TableContainer component={Paper}>
-            {selectedBookCopies. length > 0 ?
+            {selectedBookCopies.length > 0 ?
             <Table>
               <TableHead>
                 <TableRow>
