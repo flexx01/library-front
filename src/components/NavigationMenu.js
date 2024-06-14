@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
 import HistoryIcon from '@mui/icons-material/History';
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
@@ -80,6 +81,16 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                     <ListItemText
                         sx={{ m: 0, whiteSpace: "nowrap" }}
                         primary="Historia wypożyczeń"
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem button component={Link} to="/fines">
+                    <ListItemIcon>
+                      <PaymentsIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        sx={{ m: 0, whiteSpace: "nowrap" }}
+                        primary="Grzywny"
                     />
                   </ListItem>
                   <Divider />
@@ -187,6 +198,15 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                       </ListItemIcon>
                     </ListItem>
                   </Tooltip>
+                  <Divider />
+                  <Tooltip title="Grzywny" placement="right">
+                    <ListItem button component={Link} to="/user/fines">
+                      <ListItemIcon>
+                        <PaymentsIcon />
+                      </ListItemIcon>
+                    </ListItem>
+                  </Tooltip>
+                  <Divider />
                   </>
                   }
             <Divider />

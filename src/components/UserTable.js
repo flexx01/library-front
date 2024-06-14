@@ -32,8 +32,10 @@ const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [openLoanDialog, setOpenLoanDialog] = useState(false);
   const [openFineDialog, setOpenFineDialog] = useState(false);
+  const [openReturnBook, setOpenReturnBook] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [books, setBooks] = useState([]);
+  const [loans, setLoans] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [bookSearchQuery, setBookSearchQuery] = useState("");
   const [bookCopies, setBookCopies] = useState([]);
@@ -152,6 +154,7 @@ const UserTable = () => {
     setSuccess("");
   };
 
+
   const handleAddFine = async () => {
     setError("");
     setSuccess("");
@@ -227,15 +230,34 @@ const UserTable = () => {
     }
   }
 
-  const handleReturnBook = async (userId) => {
+  const fetchLoans = async (userId) => {
     try {
-      await axiosInstance.get(`/api/loan/closeLoan?userId=${userId}`);
-      setSuccess("Książka została zwrócona pomyślnie");
+      const response = await axiosInstance.get(`/api/users?id=${userId}`);
+      setLoans(response.data.loans);
       // Optionally, you can refetch user loans to update the UI
     } catch (error) {
       setError("Błąd podczas zwracania książki");
     }
+  }
+
+  const handleReturnBook = async (userId) => {
+    setOpenReturnBook(true);
+    await fetchLoans(userId);
   };
+
+  const closeLoanById =  async (loanId) => {
+    try {
+      await axiosInstance.get(`/api/loan/closeLoan?id=${loanId}`);
+      await fetchLoans(selectedUser);
+      setSuccess("Książka została zwrócona pomyślnie");
+      setTimeout(() => {
+        setSuccess(null);
+      }, 2000)
+    } catch (error) {
+      setError("Błąd podczas zwracania książki");
+    }
+  }
+
 
   const filteredUsers = users.filter(
     (user) =>
@@ -486,6 +508,50 @@ const UserTable = () => {
         <DialogActions>
           <Button onClick={handleCloseFineDialog}>Anuluj</Button>
           <Button onClick={handleAddFine}>Dodaj</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openReturnBook} onClose={() => {setOpenReturnBook(false)}}>
+        <DialogTitle>Zwróć książke z listy</DialogTitle>
+        <DialogContent>
+          {loans.filter(loan => loan.status === "IN_PROGRESS").length > 0 ? (
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ID Książki</TableCell>
+                      <TableCell>Tytuł</TableCell>
+                      <TableCell>Autorzy</TableCell>
+                      <TableCell>Zwrot do</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {loans?.filter(loan => loan.status === "IN_PROGRESS")?.map((loan) => (
+                        <TableRow key={loan.copy.book.id}>
+                          <TableCell>{loan.copy.book.id}</TableCell>
+                          <TableCell>{loan.copy.book.title}</TableCell>
+                          <TableCell>{loan.copy.book.authors}</TableCell>
+                          <TableCell>{loan.maxReturnDate}</TableCell>
+                          <TableCell>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                onClick={async () => {await closeLoanById(loan.id)}}>
+                              Zwróć
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+          ) : "Brak wypożyczonych książek"}
+          {error && <Alert severity="error">{error}</Alert>}
+          {success && <Alert severity="success">{success}</Alert>}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setOpenReturnBook(false)}}>Anuluj</Button>
+          {/*<Button onClick={handleAddFine}>Dodaj</Button>*/}
         </DialogActions>
       </Dialog>
     </Box>

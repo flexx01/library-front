@@ -29,8 +29,9 @@ const UserFines = () => {
   const fetchFines = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/fine/allByUserId?userId=${user.id}`
+        `/api/fine/allByUserId?id=${user.id}`
       );
+      console.log(response.data);
       setFines(response.data);
     } catch (error) {
       console.error("There was an error fetching the fines!", error);
@@ -40,7 +41,7 @@ const UserFines = () => {
 
   const handlePayFine = async (fineId) => {
     try {
-      await axiosInstance.put(`/api/fine?id=${fineId}`, { status: "PAID" });
+      await axiosInstance.delete(`/api/fine?id=${fineId}`);
       fetchFines(); // Refresh fines
     } catch (error) {
       console.error("There was an error paying the fine!", error);
@@ -64,18 +65,17 @@ const UserFines = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Kwota</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Powód</TableCell>
               <TableCell>Akcje</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {fines.map((fine) => (
+            {fines.length > 0 ? fines?.map((fine) => (
               <TableRow key={fine.id}>
                 <TableCell>{fine.id}</TableCell>
                 <TableCell>{fine.amount}</TableCell>
-                <TableCell>{fine.status}</TableCell>
+                <TableCell>{fine.reason ?? 'Nie określony'}</TableCell>
                 <TableCell>
-                  {fine.status === "UNPAID" && (
                     <Button
                       variant="contained"
                       color="primary"
@@ -83,10 +83,9 @@ const UserFines = () => {
                     >
                       Zapłać
                     </Button>
-                  )}
                 </TableCell>
               </TableRow>
-            ))}
+            )) : "Brak zaległych płatności"}
           </TableBody>
         </Table>
       </TableContainer>
