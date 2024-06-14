@@ -84,7 +84,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                     />
                   </ListItem>
                   <Divider />
-                  <ListItem button component={Link} to="/fines">
+                  <ListItem button component={Link} to="/user/fines">
                     <ListItemIcon>
                       <PaymentsIcon />
                     </ListItemIcon>
