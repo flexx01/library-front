@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box,
   Typography,
@@ -7,8 +7,11 @@ import {
   Tabs,
   Tab,
   Grid,
+  Alert,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { login, register } from "../api/authApi";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -18,24 +21,52 @@ const Login = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); // State for success messages
+  const { login: loginContext } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
+    setError(""); // Clear error message when switching tabs
+    setSuccess(""); // Clear success message when switching tabs
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    setError(""); // Clear any previous error messages
+    if (!email || !password) {
+      setError("Email i hasło są wymagane");
+      return;
+    }
     try {
       const data = await login(email, password);
       console.log("Login successful:", data);
-      // Handle successful login (e.g., store token, redirect, etc.)
+      await loginContext(data); // Update context
+      navigate("/"); // Redirect to home
     } catch (error) {
       console.error("Login error:", error);
+      setError("Nieprawidłowy email lub hasło"); // Set error message for failed login
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    setError(""); // Clear any previous error messages
+    setSuccess(""); // Clear any previous success messages
+    if (
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !firstName ||
+      !lastName ||
+      !phoneNumber
+    ) {
+      setError("Wszystkie pola są wymagane");
+      return;
+    }
     if (password !== confirmPassword) {
-      console.error("Passwords do not match");
+      setError("Hasła nie są zgodne");
       return;
     }
 
@@ -50,9 +81,23 @@ const Login = () => {
     try {
       const data = await register(userDetails);
       console.log("Registration successful:", data);
-      // Handle successful registration (e.g., redirect to login, etc.)
+      setSuccess(
+        "Rejestracja zakończona sukcesem! Możesz się teraz zalogować."
+      ); // Set success message
+      setTabIndex(0); // Switch to the login tab
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setFirstName("");
+      setLastName("");
+      setPhoneNumber("");
     } catch (error) {
       console.error("Registration error:", error);
+      if (error.response && error.response.status === 409) {
+        setError("Użytkownik o podanym adresie email już istnieje");
+      } else {
+        setError("Rejestracja nie powiodła się");
+      }
     }
   };
 
@@ -82,8 +127,18 @@ const Login = () => {
           <Tab label="Zarejestruj się" />
         </Tabs>
       </Box>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          {success}
+        </Alert>
+      )}
       {tabIndex === 0 && (
-        <Box>
+        <Box component="form" onSubmit={handleLogin}>
           <Typography variant="h4" sx={{ mt: 3 }}>
             Zaloguj się
           </Typography>
@@ -93,6 +148,7 @@ const Login = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <TextField
             fullWidth
@@ -101,19 +157,20 @@ const Login = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <Button
+            type="submit"
             variant="contained"
             color="primary"
             sx={{ mt: 2 }}
-            onClick={handleLogin}
           >
             Zaloguj się
           </Button>
         </Box>
       )}
       {tabIndex === 1 && (
-        <Box>
+        <Box component="form" onSubmit={handleRegister}>
           <Typography variant="h4" sx={{ mt: 3 }}>
             Zarejestruj się
           </Typography>
@@ -123,6 +180,7 @@ const Login = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -132,6 +190,7 @@ const Login = () => {
                 margin="normal"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -141,6 +200,7 @@ const Login = () => {
                 margin="normal"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                required
               />
             </Grid>
           </Grid>
@@ -150,6 +210,7 @@ const Login = () => {
             margin="normal"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
+            required
           />
           <TextField
             fullWidth
@@ -158,6 +219,7 @@ const Login = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <TextField
             fullWidth
@@ -166,12 +228,13 @@ const Login = () => {
             margin="normal"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            required
           />
           <Button
+            type="submit"
             variant="contained"
             color="primary"
             sx={{ mt: 2 }}
-            onClick={handleRegister}
           >
             Zarejestruj się
           </Button>

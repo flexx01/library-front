@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Drawer,
   List,
@@ -11,8 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import BookIcon from "@mui/icons-material/Book"; // Ikona dla przeglądania książek
+import HistoryIcon from '@mui/icons-material/History';
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"; // Ikona dla panelu admina
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const drawerWidth = 240;
 const miniDrawerWidth = 60;
@@ -35,6 +40,8 @@ const StyledDrawer = styled(Drawer, {
 }));
 
 const NavigationMenu = ({ open, toggleDrawer }) => {
+  const { user } = useContext(AuthContext);
+
   const drawerContent = (
     <List
       sx={{
@@ -52,6 +59,59 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           <ListItemText sx={{ m: 0, whiteSpace: "nowrap" }} primary="Główna" />
         </ListItem>
         <Divider />
+        {user && user.role !== "ADMIN" && (
+          <>
+            <ListItem button component={Link} to="/books">
+              <ListItemIcon>
+                <BookIcon />
+              </ListItemIcon>
+              <ListItemText
+                sx={{ m: 0, whiteSpace: "nowrap" }}
+                primary="Przeglądaj Książki"
+              />
+            </ListItem>
+            {user.role === "USER" &&
+                <>
+                  <Divider />
+                  <ListItem button component={Link} to="/history">
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        sx={{ m: 0, whiteSpace: "nowrap" }}
+                        primary="Historia wypożyczeń"
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem button component={Link} to="/reservations">
+                    <ListItemIcon>
+                      <BookmarkAddedIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        sx={{ m: 0, whiteSpace: "nowrap" }}
+                        primary="Rezerwacje"
+                    />
+                  </ListItem>
+                </>
+            }
+            <Divider />
+          </>
+        )}
+
+        {user && user.role === "ADMIN" && (
+          <>
+            <ListItem button component={Link} to="/admin">
+              <ListItemIcon>
+                <AdminPanelSettingsIcon />
+              </ListItemIcon>
+              <ListItemText
+                sx={{ m: 0, whiteSpace: "nowrap" }}
+                primary="Panel Admina"
+              />
+            </ListItem>
+            <Divider />
+          </>
+        )}
       </div>
       <div>
         <Divider />
@@ -100,6 +160,51 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
           </ListItem>
         </Tooltip>
         <Divider />
+        {user && user.role !== "ADMIN" && (
+          <>
+            <Tooltip title="Przeglądaj Książki" placement="right">
+              <ListItem button component={Link} to="/books">
+                <ListItemIcon>
+                  <BookIcon />
+                </ListItemIcon>
+              </ListItem>
+            </Tooltip>
+            {user.role === "USER" &&
+                <>
+                  <Divider />
+                  <Tooltip title="Hisoria wypożyczeń" placement="right">
+                  <ListItem button component={Link} to="/history">
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                  </Tooltip>
+                  <Divider />
+                  <Tooltip title="Rezerwacje" placement="right">
+                    <ListItem button component={Link} to="/reservations">
+                      <ListItemIcon>
+                        <BookmarkAddedIcon />
+                      </ListItemIcon>
+                    </ListItem>
+                  </Tooltip>
+                  </>
+                  }
+            <Divider />
+          </>
+        )}
+
+        {user && user.role === "ADMIN" && (
+          <>
+            <Tooltip title="Panel Admina" placement="right">
+              <ListItem button component={Link} to="/admin">
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+              </ListItem>
+            </Tooltip>
+            <Divider />
+          </>
+        )}
       </div>
     </List>
   );

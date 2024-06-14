@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../api/axiosConfig';
+import  axiosInstance  from '../api/axiosConfig';
 import { Box, TextField, Button, Typography, FormControlLabel, Checkbox } from '@mui/material';
 
 const UserEdit = () => {
@@ -80,7 +80,7 @@ const UserEdit = () => {
     const handleSaveAndNavigate = async () => {
         if (validate()) {
             await handleSave();
-            navigate('/users'); // Przekierowanie po zapisaniu zmian
+            navigate('/admin'); // Przekierowanie po zapisaniu zmian
         }
     };
 

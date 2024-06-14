@@ -1,15 +1,13 @@
-import {axiosInstance, setToken} from "./axiosConfig";
-import axios from "axios";
+import axiosInstance from "./axiosConfig";
 
 export const login = async (email, password) => {
   try {
-    const response = await axios.post("https://biblioteka-39f72f16d605.herokuapp.com/api/login", {
+    const response = await axiosInstance.post("/api/login", {
       email,
       password,
     });
     const token = response.data.token; // Assuming the token is in the response
     localStorage.setItem("authToken", token); // Store the token
-    setToken(token);                  //Dodanie tokenu do wszystkich zapytań
     return response.data;
   } catch (error) {
     console.error("Error during login:", error);
@@ -19,10 +17,30 @@ export const login = async (email, password) => {
 
 export const register = async (userDetails) => {
   try {
-    const response = await axiosInstance.post("/auth/register", userDetails);
+    const response = await axiosInstance.post("/api/register", userDetails);
     return response.data;
   } catch (error) {
     console.error("Error during registration:", error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    await axiosInstance.get("/api/logout");
+    localStorage.removeItem("authToken"); // Remove the token
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw error;
+  }
+};
+
+export const getMe = async () => {
+  try {
+    const response = await axiosInstance.get("/api/me");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
     throw error;
   }
 };
