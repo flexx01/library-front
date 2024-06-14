@@ -12,12 +12,20 @@ import {
     Box,
     Button,
     TextField,
+    Pagination,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Grid
 } from "@mui/material";
 
 const Reservations = () => {
     const [reservations, setReservations] = useState([]);
-    const [search,setSearch] = useState('');
+    const [search, setSearch] = useState('');
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     useEffect(() => {
         fetchReservations();
@@ -28,10 +36,9 @@ const Reservations = () => {
             const response = await axiosInstance.get("/api/me");
             if(response.status === 200) {
                 setReservations(response.data.reservations);
-                console.log(response.data.reservations);
             }
         } catch (error) {
-            console.error("There was an error fetching the books!", error);
+            console.error("There was an error fetching the reservations!", error);
             setError(error);
         }
     };
@@ -43,17 +50,52 @@ const Reservations = () => {
                 await fetchReservations();
             }
         } catch (error) {
-            console.error("There was an error fetching the books!", error);
+            console.error("There was an error deleting the reservation!", error);
             setError(error);
         }
-    }
+    };
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(1);
+    };
+
+    const paginatedReservations = reservations.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
     return (
-        <Box gap={4} sx={{ padding: 4 }}>
+        <Box sx={{ padding: 2 }}>
             <Typography variant="h4" gutterBottom>
                 Twoje Rezerwacje
             </Typography>
+            <Grid container spacing={2} alignItems="center" justifyContent="space-between" mb={2} sx={{ flexWrap: "nowrap" }}>
+                <Grid item>
+                    <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+                        <InputLabel>Liczba na stronę</InputLabel>
+                        <Select
+                            value={rowsPerPage}
+                            onChange={handleChangeRowsPerPage}
+                            label="Liczba na stronę"
+                        >
+                            <MenuItem value={10}>10</MenuItem>
+                            <MenuItem value={25}>25</MenuItem>
+                            <MenuItem value={50}>50</MenuItem>
+                            <MenuItem value={100}>100</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item>
+                    <Pagination
+                        count={Math.ceil(reservations.length / rowsPerPage)}
+                        page={page}
+                        onChange={handleChangePage}
+                        color="primary"
+                    />
+                </Grid>
+            </Grid>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -67,7 +109,7 @@ const Reservations = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {reservations.map((reserv) => (
+                        {paginatedReservations.map((reserv) => (
                             <TableRow key={reserv.id}>
                                 <TableCell>{reserv.id}</TableCell>
                                 <TableCell>{reserv.copy.book.title}</TableCell>
