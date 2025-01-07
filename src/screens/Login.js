@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import GoogleButton from "../components/GoogleButton"
 import {
   Box,
   Typography,
@@ -12,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
+import {BASE_URL} from "../config";
 
 const Login = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -138,47 +140,52 @@ const Login = () => {
         </Alert>
       )}
       {tabIndex === 0 && (
-        <Box component="form" onSubmit={handleLogin}>
-          <Typography variant="h4" sx={{ mt: 3 }}>
-            Zaloguj się
-          </Typography>
-          <TextField
-            fullWidth
-            label="Email"
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            label="Hasło"
-            type="password"
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-          >
-            Zaloguj się
-          </Button>
-        </Box>
+          <Box component="form" onSubmit={handleLogin}>
+            <Typography variant="h4" sx={{mt: 3}}>
+              Zaloguj się
+            </Typography>
+            <TextField
+                fullWidth
+                label="Email"
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+            />
+            <TextField
+                fullWidth
+                label="Hasło"
+                type="password"
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+            />
+
+            <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{mt: 2,mb:2}}
+            >
+              Zaloguj się
+            </Button>
+            <Box>
+            <GoogleButton
+            />
+            </Box>
+          </Box>
       )}
       {tabIndex === 1 && (
-        <Box component="form" onSubmit={handleRegister}>
-          <Typography variant="h4" sx={{ mt: 3 }}>
-            Zarejestruj się
-          </Typography>
-          <TextField
-            fullWidth
-            label="Email"
-            margin="normal"
-            value={email}
+          <Box component="form" onSubmit={handleRegister}>
+            <Typography variant="h4" sx={{mt: 3}}>
+              Zarejestruj się
+            </Typography>
+            <TextField
+                fullWidth
+                label="Email"
+                margin="normal"
+                value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -234,10 +241,15 @@ const Login = () => {
             type="submit"
             variant="contained"
             color="primary"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2,mb: 2 }}
           >
             Zarejestruj się
           </Button>
+            <Box>
+              <GoogleButton
+                  isLogin={false}
+              />
+            </Box>
         </Box>
       )}
     </Box>

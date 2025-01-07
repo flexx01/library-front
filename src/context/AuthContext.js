@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (userData) => {
+    console.log(userData)
     localStorage.setItem("authToken", userData.token);
     await fetchUserDetails(userData.token);
   };

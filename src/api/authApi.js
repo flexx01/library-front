@@ -1,8 +1,10 @@
 import axiosInstance from "./axiosConfig";
+import axios from "axios";
+import {BASE_URL} from "../config";
 
 export const login = async (email, password) => {
   try {
-    const response = await axiosInstance.post("/api/login", {
+    const response = await axios.post(BASE_URL + "api/login", {
       email,
       password,
     });

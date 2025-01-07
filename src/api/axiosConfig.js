@@ -1,7 +1,8 @@
 import axios from "axios";
+import {BASE_URL} from "../config";
 
 const axiosInstance = axios.create({
-  baseURL: "https://biblioteka-39f72f16d605.herokuapp.com/",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
