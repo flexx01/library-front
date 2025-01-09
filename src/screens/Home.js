@@ -7,7 +7,7 @@ const Home = () => {
   const { user, login } = useContext(AuthContext);
   const params = useParams();
     useEffect(() => {
-        if(params?.token) {
+        if(params?.token && !user?.firstName) {
             login(params)
         }
     }, []);

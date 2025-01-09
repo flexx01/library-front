@@ -20,6 +20,14 @@ import {
   Grid
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
+import {loadStripe} from "@stripe/stripe-js";
+import {Elements} from "@stripe/react-stripe-js";
+import CheckoutForm from "./CheckoutForm";
+
+const stripePromise = loadStripe('pk_test_51QehD9RxCM04etza9sKULu4H5WL3mWPRDgIEgls9ybJeGAGsIzcmGoAm2jXPmLTBADTxVQ8fIGNSmBDwdYH4EaF700GZaFOOH9');
+// const options = {
+//   clientSecret: 'sk_test_51QehD9RxCM04etza7VFPwuyIR9guFp0m6XdzdSMsIIQe4LFQ8xvBDI2NaUKM6ff3NVuDaUTur0WcXwhxa299uAkY00rDfyvw3u'
+// }
 
 const UserFines = () => {
   const [fines, setFines] = useState([]);
@@ -27,6 +35,9 @@ const UserFines = () => {
   const { user } = useContext(AuthContext);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedFine, setSelectedFine] = useState(null);
+  const [showPaymentForm,setShowPaymentForm] = useState(false);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -47,14 +58,39 @@ const UserFines = () => {
   };
 
   const handlePayFine = async (fineId) => {
+
     try {
-      await axiosInstance.delete(`/api/fine?id=${fineId}`);
-      fetchFines(); // Refresh fines
-    } catch (error) {
-      console.error("There was an error paying the fine!", error);
-      setError(error.message);
+        setSelectedFine(fineId);
+        setShowPaymentForm(true);
+    }catch (error) {
+        console.log("There was an error paying the fine!", error);
+        setError(error.message);
     }
+
   };
+
+  const handlePaymentComplete = async () => {
+    try {
+      await fetchFines();
+      setSuccess("Platnosc powiodla sie!")
+      setFines(prevState => prevState.filter((fine) => fine.id!== selectedFine));
+      setSelectedFine(null);
+      setShowPaymentForm(false);
+      setTimeout(() => {
+        setSuccess(null)
+      }, 5000)
+    }catch (e) {
+
+    }
+  }
+
+  const handlePaymentFailed = (message) => {
+    setError(message);
+    setShowPaymentForm(false);
+    setTimeout(() => {
+      setError(null)
+    }, 5000)
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -72,13 +108,10 @@ const UserFines = () => {
       <Typography variant="h4" gutterBottom>
         Moje grzywny
       </Typography>
-      {error && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {error}
-        </Alert>
-      )}
+
       <Grid container spacing={2} alignItems="center" justifyContent="space-between" mb={2} sx={{ flexWrap: "nowrap" }}>
         <Grid item>
+
           <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
             <InputLabel>Liczba na stronę</InputLabel>
             <Select
@@ -101,6 +134,16 @@ const UserFines = () => {
             color="primary"
           />
         </Grid>
+        {error && (
+            <Alert severity="error" sx={{ mt: 2,mb:1 }}>
+              {error}
+            </Alert>
+        )}
+        {success && (
+            <Alert severity="success" sx={{ mt: 2,mb: 1 }}>
+              {success}
+            </Alert>
+        )}
       </Grid>
       <TableContainer component={Paper}>
         <Table>
@@ -124,7 +167,7 @@ const UserFines = () => {
                       color="primary"
                       onClick={() => handlePayFine(fine.id)}
                     >
-                      Zapłać
+                      Zapłać online
                     </Button>
                 </TableCell>
               </TableRow>
@@ -136,6 +179,18 @@ const UserFines = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Box>
+      {showPaymentForm && (
+          <Elements stripe={stripePromise}>
+            <CheckoutForm
+                show={showPaymentForm}
+                selectedFineId={selectedFine}
+                onPaymentComplete={handlePaymentComplete}
+                onPaymentFailed={handlePaymentFailed}
+                close={() => setShowPaymentForm(false)}
+            />
+          </Elements>)}
+      </Box>
     </Box>
   );
 };
