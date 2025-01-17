@@ -272,12 +272,13 @@ const UserTable = () => {
     setPage(1);
   };
 
-  const filteredUsers = users.filter(
+  const filteredUsers = (users || []).filter(
     (user) =>
-      user.firstName.toLowerCase().includes(searchQuery) ||
-      user.lastName.toLowerCase().includes(searchQuery) ||
-      user.email.toLowerCase().includes(searchQuery) ||
-      user.phoneNumber.toLowerCase().includes(searchQuery)
+      user &&
+      ((user.firstName && user.firstName.toLowerCase().includes(searchQuery)) ||
+       (user.lastName && user.lastName.toLowerCase().includes(searchQuery)) ||
+       (user.email && user.email.toLowerCase().includes(searchQuery)) ||
+       (user.phoneNumber && user.phoneNumber.toLowerCase().includes(searchQuery)))
   );
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);

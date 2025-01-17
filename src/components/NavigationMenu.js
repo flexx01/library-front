@@ -194,7 +194,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                   <Tooltip title="Rezerwacje" placement="right">
                     <ListItem button component={Link} to="/reservations">
                       <ListItemIcon>
-                        <BookmarkAddedIcon />
+                      <PaymentsIcon />
                       </ListItemIcon>
                     </ListItem>
                   </Tooltip>
@@ -202,7 +202,7 @@ const NavigationMenu = ({ open, toggleDrawer }) => {
                   <Tooltip title="Grzywny" placement="right">
                     <ListItem button component={Link} to="/user/fines">
                       <ListItemIcon>
-                        <PaymentsIcon />
+                        <BookmarkAddedIcon />
                       </ListItemIcon>
                     </ListItem>
                   </Tooltip>
